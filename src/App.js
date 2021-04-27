@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { connect } from 'react-redux';
 import clsx from 'clsx';
 import {
     CssBaseline,
@@ -8,14 +9,31 @@ import {
     Typography,
     Drawer,
     Divider,
+    List,
     Box,
     Link,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogContentText,
+    TextField,
+    DialogActions,
+    Button,
     makeStyles,
 } from '@material-ui/core';
 import {
     Menu as MenuIcon,
     ChevronLeft as ChevronLeftIcon,
 } from '@material-ui/icons';
+import store from './store/redux';
+import {
+    loadElements,
+    switchAdd,
+    switchDelete,
+    addBranch,
+    deleteBranch,
+} from "./store/actions";
+import Branch from './components/branch';
 
 const drawerWidth = 300;
 const useStyles = makeStyles((theme) => ({
@@ -39,12 +57,6 @@ const useStyles = makeStyles((theme) => ({
     },
     toolbar: {
         paddingRight: 24, // keep right padding when drawer closed
-    },
-    menuButton: {
-        marginRight: 36,
-    },
-    menuButtonHidden: {
-        display: 'none',
     },
     title: {
         flexGrow: 1,
@@ -90,45 +102,160 @@ const useStyles = makeStyles((theme) => ({
     },
   }));
 
-const App = () => {
+const App = (props) => {
     const classes = useStyles();
-    const [showCategories, setShowCategories] = useState(true);
+    const [showDrawer, setShowDrawer] = useState(true);
+    const {
+        dispatch,
+        showAdd,
+        showDelete,
+        modalId,
+        modalName,
+        selectedId,
+        selected,
+    } = props;
+
+    useEffect(
+        ()=> loadElements().then(action => store.dispatch(action)),
+        []
+    );
+
+    const toggleDrawer = (open) => (event) => {
+        if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+          return;
+        }
+    
+        setShowDrawer(open);
+      };
+
+    const addBranchDialog = (
+        <Dialog
+            id="addBranchDialog"
+            position="absolute"
+            open={showAdd}
+        >
+            <DialogTitle>
+                new branch
+            </DialogTitle>
+            <DialogContent>
+                <DialogContentText>
+                    {
+                        modalId
+                            ? `branch of ${modalName}`
+                            : "trunk branch"
+                    }
+                </DialogContentText>
+                <TextField id="addName" autoFocus label="name" />
+            </DialogContent>
+            <DialogActions>
+                <Button
+                    id="addButtonAdd"
+                    onClick={() => {
+                        addBranch({
+                            name: document.getElementById("addName").value,
+                            parentId: modalId,
+                        }).then(action => {
+                            dispatch(action);
+                            dispatch(switchAdd(false));
+                        });
+                    }}
+                >
+                    add
+                </Button>
+                <Button
+                    id="addButtonCancel"
+                    onClick={() => {
+                        dispatch(switchAdd(false))
+                    }}
+                >
+                    cancel
+                </Button>
+            </DialogActions>
+        </Dialog>
+    );
+    
+    const deleteBranchDialog = (
+        <Dialog
+            id="addCategoryDialog"
+            position="absolute"
+            open={showDelete}
+        >
+            <DialogTitle>
+                delete branch
+            </DialogTitle>
+            <DialogContent>
+                do you want to delete "{modalName}" branch and ALL its leaves?
+            </DialogContent>
+            <DialogActions>
+                <Button
+                    id="deleteCategoryButtonAdd"
+                    onClick={() => {
+                        deleteBranch(modalId)
+                            .then(action => {
+                                dispatch(action);
+                                dispatch(switchDelete(false));
+                            });
+                    }}>
+                    delete
+                </Button>
+                <Button
+                    id="deleteCategoryButtonCancel"
+                    onClick={() => {
+                        dispatch(switchDelete(false))
+                    }}
+                >
+                    cancel
+                </Button>
+            </DialogActions>
+        </Dialog>
+    );
 
     return (
-        <div id="app" className={classes.root}>
+        <div
+            id="app"
+            className={classes.root}
+        >
             <CssBaseline />
+            {addBranchDialog}
+            {deleteBranchDialog}
             <AppBar
                 position="absolute"
-                className={clsx(classes.appBar, showCategories && classes.appBarShift)}
+                className={clsx(classes.appBar, showDrawer && classes.appBarShift)}
             >
                 <Toolbar className={classes.toolbar}>
-                    <IconButton
+                    {!showDrawer && <IconButton
+                        id="openDrawer"
                         edge="start"
                         color="inherit"
                         aria-label="open drawer"
-                        onClick={() => setShowCategories(true)}
-                        className={clsx(classes.menuButton, showCategories && classes.menuButtonHidden)}
+                        onClick={toggleDrawer(true)}
                     >
                         <MenuIcon />
-                    </IconButton>
+                    </IconButton>}
                     <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
                         arbor
                     </Typography>
                 </Toolbar>
             </AppBar>
             <Drawer
-                variant="permanent"
+                variant="persistent"
+                open={showDrawer}
                 classes={{
-                    paper: clsx(classes.drawerPaper, !showCategories && classes.drawerPaperClose),
+                    paper: clsx(classes.drawerPaper, !showDrawer && classes.drawerPaperClose),
                 }}
-                open={showCategories}
             >
                 <div className={classes.toolbarIcon}>
-                    <IconButton onClick={() => setShowCategories(false)}>
+                    <IconButton
+                        id="closeDrawer"
+                        onClick={toggleDrawer(false)}
+                    >
                         <ChevronLeftIcon />
                     </IconButton>
                 </div>
                 <Divider />         
+                <List dense={true}>
+                    <Branch />
+                </List>            
             </Drawer>
             <main className={classes.content}>
                 <div className={classes.appBarSpacer} />
@@ -144,5 +271,15 @@ const App = () => {
         </div>
     );
 }
+const mapStateToProps = state => {
+    return {
+        showAdd: state.showAdd,
+        showDelete: state.showDelete,
+        modalId: state.modalId,
+        modalName: state.branches.find(branch=>branch.id===state.modalId)?.name,
+        selectedId: state.selectedId,
+        selected: state.branches.find(branch=>branch.id===state.selectedId)?.name,
+    }
+};
 
-export default App;
+export default connect(mapStateToProps, null)(App);

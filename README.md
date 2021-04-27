@@ -1,10 +1,14 @@
 # about this app
 
-TO-DO
+This app allows the user to manage personal information locally in the browser, using no server to storage it.
+
+The information is managed as branches from a tree, where the trunk branch has as many branches inside as you want and those ones recursively too.
 
 # used libraries
 
-TO-DO
+- For app state managing: [Redux](https://react-redux.js.org/)
+- For visual components: [Material-UI](https://material-ui.com/)
+- For local storage: [Dexie.js](https://dexie.org/)
 
 # available scripts
 
