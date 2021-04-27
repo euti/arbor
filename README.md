@@ -2,9 +2,9 @@
 
 This app allows the user to manage personal information locally in the browser, using no server to storage it.
 
-The information is managed as branches from a tree, where the trunk branch has as many branches inside as you want and those ones recursively too.
+The information is managed as branches from a tree, where the trunk branch has as many branches inside as you want and those ones recursively too. Branches have leaves to store information (text, for example).
 
-Branches can be deleted if have no child branches.
+Branches can be deleted if have no child branches. Deleting branches deletes all its leaves.
 
 ## searching branches
 

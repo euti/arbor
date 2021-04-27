@@ -38,10 +38,19 @@ function reducer(state, action) {
         case 'DELETE_BRANCH' : return {
             ...state,
             branches: state.branches.filter(branch=>branch.id !== action.id),
+            leaves: state.leaves.filter(leaf=>leaf.branchId !== action.id),
         }
         case 'SET_SEARCHTEXT_BRANCH' : return {
             ...state,
             searchTextBranch: action.text,
+        }
+        case 'ADD_LEAF' : return {
+            ...state,
+            leaves: [...state.leaves,action.leaf],
+        }
+        case 'DELETE_LEAF' : return {
+            ...state,
+            leaves: state.leaves.filter(leaf=>leaf.id !== action.id),
         }
         default:
             return state

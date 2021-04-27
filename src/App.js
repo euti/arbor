@@ -33,8 +33,10 @@ import {
     setSearchTextBranch,
     addBranch,
     deleteBranch,
+    addLeaf,
 } from "./store/actions";
 import Branch from './components/branch';
+import Leaf from './components/leaf';
 
 const drawerWidth = 300;
 const useStyles = makeStyles((theme) => ({
@@ -115,6 +117,7 @@ const App = (props) => {
         selectedId,
         selected,
         searchTextBranch,
+        leaves,
     } = props;
 
     useEffect(
@@ -235,7 +238,10 @@ const App = (props) => {
                         <MenuIcon />
                     </IconButton>}
                     <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-                        arbor
+                        {selected
+                            ? selected
+                            : "select a branch to show its leaves"
+                        }
                     </Typography>
                 </Toolbar>
             </AppBar>
@@ -268,6 +274,25 @@ const App = (props) => {
             </Drawer>
             <main className={classes.content}>
                 <div className={classes.appBarSpacer} />
+                {selected && (
+                    <>
+                        {leaves?.map(leaf => (
+                            <Leaf
+                                key={leaf.id}
+                                leaf={leaf}
+                            />
+                        ))}
+                        <Button
+                            onClick={()=>{
+                                addLeaf({
+                                    branchId: selectedId,
+                                }).then(action=>dispatch(action))
+                            }}
+                        >
+                            + add new leaf
+                        </Button>
+                    </>
+                )}
                 <Box pt={4}>
                     <Typography variant="body2" color="textSecondary" align="center">
                         {'made with love by '}
@@ -288,6 +313,7 @@ const mapStateToProps = state => {
         modalName: state.branches.find(branch=>branch.id===state.modalId)?.name,
         selectedId: state.selectedId,
         selected: state.branches.find(branch=>branch.id===state.selectedId)?.name,
+        leaves: state.leaves.filter(leaf=>leaf.branchId===state.selectedId),
         searchTextBranch: state.searchTextBranch,
     }
 };

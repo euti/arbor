@@ -52,10 +52,13 @@ export function addBranch(newObj) {
 export function deleteBranch(id) {
     return db.branches.where("id").equals(id).delete()
         .then(()=> {
-            return {
-                type: 'DELETE_BRANCH',
-                id,
-            }
+            return db.leaves.where("branchId").equals(id).delete()
+                .then(()=> {
+                    return {
+                        type: 'DELETE_BRANCH',
+                        id,
+                    }
+                })
         })
 };
 
@@ -65,3 +68,23 @@ export function setSearchTextBranch(text) {
         text,
     }
 }
+
+export function addLeaf(newObj) {
+    return db.leaves.add(newObj)
+        .then(id=> {
+            return {
+                type: 'ADD_LEAF',
+                leaf: Object.assign({id},newObj),
+            }
+        })
+};
+
+export function deleteLeaf(id) {
+    return db.leaves.where("id").equals(id).delete()
+        .then(()=> {
+            return {
+                type: 'DELETE_LEAF',
+                id,
+            }
+        })
+};
