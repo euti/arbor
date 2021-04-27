@@ -52,7 +52,10 @@ const Branch = (props) => {
                 }}
             >
                 {id && <SubIcon />}
-                <ListItemText primary={item.name} />
+                <ListItemText
+                    primary={item.name}
+                    onDoubleClick={()=>setOpen(!open)}
+                />
                 <ListItemSecondaryAction>
                     <IconButton
                         size='small'
