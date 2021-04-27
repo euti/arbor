@@ -4,6 +4,12 @@ This app allows the user to manage personal information locally in the browser, 
 
 The information is managed as branches from a tree, where the trunk branch has as many branches inside as you want and those ones recursively too.
 
+Branches can be deleted if have no child branches.
+
+## searching branches
+
+Using "search" field allow to shows branches including this text and all its branches.
+
 # used libraries
 
 - For app state managing: [Redux](https://react-redux.js.org/)

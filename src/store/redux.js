@@ -7,6 +7,7 @@ const initialState = {
     showDelete: false,
     modalId: undefined,
     selectedId: undefined,
+    searchTextBranch: '',
 };
 
 function reducer(state, action) {
@@ -18,6 +19,7 @@ function reducer(state, action) {
             showDelete: state.showDelete,
             modalId: state.modalId,
             selectedId: state.selectedId,
+            searchTextBranch: state.searchTextBranch,
         }
         case 'SWITCH_ADD' : return {
             branches: state.branches,
@@ -26,6 +28,7 @@ function reducer(state, action) {
             showDelete: state.showDelete,
             modalId: action.id,
             selectedId: state.selectedId,
+            searchTextBranch: state.searchTextBranch,
         }
         case 'SWITCH_DELETE' : return {
             branches: state.branches,
@@ -34,6 +37,7 @@ function reducer(state, action) {
             showDelete: action.state,
             modalId: action.id,
             selectedId: state.selectedId,
+            searchTextBranch: state.searchTextBranch,
         }
         case 'SELECT_BRANCH' : return {
             branches: state.branches,
@@ -42,6 +46,7 @@ function reducer(state, action) {
             showDelete: state.showDelete,
             modalId: state.modalId,
             selectedId: action.id,
+            searchTextBranch: state.searchTextBranch,
         }
         case 'ADD_BRANCH' : return {
             branches: [...state.branches,action.branch],
@@ -50,6 +55,7 @@ function reducer(state, action) {
             showDelete: state.showDelete,
             modalId: state.modalId,
             selectedId: state.selectedId,
+            searchTextBranch: state.searchTextBranch,
         }
         case 'DELETE_BRANCH' : return {
             branches: state.branches.filter(branch=>branch.id !== action.id),
@@ -58,6 +64,16 @@ function reducer(state, action) {
             showDelete: state.showDelete,
             modalId: state.modalId,
             selectedId: state.selectedId,
+            searchTextBranch: state.searchTextBranch,
+        }
+        case 'SET_SEARCHTEXT_BRANCH' : return {
+            branches: state.branches,
+            leaves: state.leaves,
+            showAdd: state.showAdd,
+            showDelete: state.showDelete,
+            modalId: state.modalId,
+            selectedId: state.selectedId,
+            searchTextBranch: action.text,
         }
         default:
             return state

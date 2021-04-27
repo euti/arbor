@@ -28,6 +28,7 @@ const Branch = (props) => {
         dispatch,
         branches,
         selectedId,
+        searchTextBranch,
         id = undefined,
     } = props;
 
@@ -38,10 +39,11 @@ const Branch = (props) => {
         ? branches.filter(branch => branch.parentId === id)
         : [];
     const hasChilds = childs.length > 0;
+    const showItem = props.showItem || searchTextBranch === "" || item.name.includes(searchTextBranch)
 
     return (
         <div className="tree">
-            <ListItem
+            {showItem && <ListItem
                 button
                 key={"item_"+id}
                 selected={id === selectedId}
@@ -79,10 +81,10 @@ const Branch = (props) => {
                         <DeleteIcon />
                     </IconButton>}
                 </ListItemSecondaryAction>
-            </ListItem>
+            </ListItem>}
             {hasChilds && (
                 <Collapse
-                    in={open}
+                    in={open || searchTextBranch !== ""}
                     key={"childs_"+id}
                 >
                     {childs.map(child=> {
@@ -93,6 +95,8 @@ const Branch = (props) => {
                                 selectedId={selectedId}
                                 id={child.id}
                                 key={"branch_"+child.id}
+                                searchTextBranch={searchTextBranch}
+                                showItem={showItem}
                             />
                         )
                     })}
@@ -106,6 +110,7 @@ const mapStateToProps = state => {
     return {
         branches: state.branches,
         selectedId: state.selectedId,
+        searchTextBranch: state.searchTextBranch,
     }
 };
 

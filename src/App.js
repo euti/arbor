@@ -30,6 +30,7 @@ import {
     loadElements,
     switchAdd,
     switchDelete,
+    setSearchTextBranch,
     addBranch,
     deleteBranch,
 } from "./store/actions";
@@ -113,6 +114,7 @@ const App = (props) => {
         modalName,
         selectedId,
         selected,
+        searchTextBranch,
     } = props;
 
     useEffect(
@@ -245,6 +247,13 @@ const App = (props) => {
                 }}
             >
                 <div className={classes.toolbarIcon}>
+                    <TextField
+                        id="searchBranches"
+                        autoComplete='off'
+                        label="search"
+                        value={searchTextBranch}
+                        onChange={(e)=>dispatch(setSearchTextBranch(e.target.value))}
+                    />
                     <IconButton
                         id="closeDrawer"
                         onClick={toggleDrawer(false)}
@@ -279,6 +288,7 @@ const mapStateToProps = state => {
         modalName: state.branches.find(branch=>branch.id===state.modalId)?.name,
         selectedId: state.selectedId,
         selected: state.branches.find(branch=>branch.id===state.selectedId)?.name,
+        searchTextBranch: state.searchTextBranch,
     }
 };
 

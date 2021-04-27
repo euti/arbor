@@ -58,3 +58,10 @@ export function deleteBranch(id) {
             }
         })
 };
+
+export function setSearchTextBranch(text) {
+    return {
+        type: 'SET_SEARCHTEXT_BRANCH',
+        text,
+    }
+}
