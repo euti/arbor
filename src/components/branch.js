@@ -36,7 +36,9 @@ const Branch = (props) => {
         ? branches.find(branch => branch.id === id)
         : {id:undefined, name:"trunk"}
     const childs = branches
-        ? branches.filter(branch => branch.parentId === id)
+        ? branches
+            .filter(branch => branch.parentId === id)
+            .sort((a, b) => { return a.name.toLowerCase().localeCompare(b.name.toLowerCase()) })
         : [];
     const hasChilds = childs.length > 0;
     const showItem = props.showItem || searchTextBranch === "" || item.name.includes(searchTextBranch)
